@@ -1,29 +1,25 @@
-const express = require("express");
-const fs = require("fs/promises");
-const cors = require("cors");
-require("dotenv").config();
+const express = require('express')
+const logger = require('morgan')
+const cors = require('cors')
 
-const PORT = process.env.PORT || 4000;
+const contactsRouter = require('./routes/api/contacts')
 
-const pathName = require("path");
+const app = express()
 
-const productsPath = pathName.join(__dirname, "products.json");
+const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short'
 
-const getProducts = async () => {
-  const data = await fs.readFile(productsPath);
-  const products = JSON.parse(data);
-  console.log(products);
-  return products;
-};
+app.use(logger(formatsLogger))
+app.use(cors())
+app.use(express.json())
 
-const app = express();
+app.use('/api/contacts', contactsRouter)
 
-app.use(cors());
+app.use((req, res) => {
+  res.status(404).json({ message: 'Not found' })
+})
 
-app.get("/products", async (req, res, next) => {
-  const products = await getProducts();
+app.use((err, req, res, next) => {
+  res.status(500).json({ message: err.message })
+})
 
-  res.json(products);
-});
-
-app.listen(PORT, () => console.log("server"));
+module.exports = app
