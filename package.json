@@ -1,6 +1,7 @@
 {
   "name": "template",
   "version": "0.0.0",
+  "homepage": "https://juliaputrova.github.io/back/",
   "private": true,
   "scripts": {
     "start": "cross-env NODE_ENV=production node ./server.js",
